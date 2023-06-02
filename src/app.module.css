@@ -1,0 +1,61 @@
+.App {
+	margin: 0;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+.registrForm {
+	display: flex;
+	flex-direction: column;
+	max-width: 400px;
+	padding: 30px;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+h2 {
+	margin: 0;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.form_group {
+	margin-bottom: 10px;
+}
+
+label {
+	display: block;
+	font-weight: bold;
+}
+
+input {
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	/* margin-bottom: 10px; */
+}
+
+button {
+	margin-top: 20px;
+	width: 100%;
+	padding: 10px;
+	background-color: #4caf50;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #45a049;
+}
+
+.errorLabel {
+	margin: 0;
+	color: red;
+	font-size: 12px;
+	font-weight: bold;
+}
