@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import styles from './app.module.css';
 
 const sendData = (formData) => {
@@ -15,15 +15,32 @@ function App() {
 
 	const [emailError, setEmailErrorr] = useState('Емейл не может быть пустым');
 	const [passwordError, setPasswordError] = useState('Пароль не может быть пустым');
-	const [repeatPasswordError, setRepeatPasswordError] = useState('Пароли не совпадают');
+	const [repeatPasswordError, setRepeatPasswordError] = useState(
+		'Поле не может быть пустым',
+	);
 
 	const [formValid, setFormValid] = useState(false);
+
+	const submitButtonRef = useRef();
+
+	useEffect(() => {
+		if (repeatPassword === '') {
+			setRepeatPasswordError('Поле не может быть пустым');
+		} else if (repeatPassword !== password){
+			setRepeatPasswordError('Пароли не cовпадает');
+		} else {
+			setRepeatPasswordError('');
+		}
+	}, [repeatPassword, password]);
 
 	useEffect(() => {
 		if (emailError || passwordError || repeatPasswordError) {
 			setFormValid(false);
 		} else {
 			setFormValid(true);
+			setTimeout(() => {
+				submitButtonRef.current.focus();
+			}, 0);
 		}
 	}, [emailError, passwordError, repeatPasswordError]);
 
@@ -51,11 +68,6 @@ function App() {
 
 	const onRepeatPasswordChange = ({ target }) => {
 		setRepeatPassword(target.value);
-		if (target.value !== password) {
-			setRepeatPasswordError('Пароли не совпадают');
-		} else {
-			setRepeatPasswordError('');
-		}
 	};
 
 	const blurHandler = ({ target }) => {
@@ -121,7 +133,7 @@ function App() {
 						<div className={styles.errorLabel}>{repeatPasswordError}</div>
 					)}
 				</div>
-				<button type="submit" disabled={!formValid}>
+				<button ref={submitButtonRef} type="submit" disabled={!formValid}>
 					Зарегистрироваться
 				</button>
 			</form>
