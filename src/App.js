@@ -1,10 +1,37 @@
 import { useEffect, useState, useRef } from 'react';
 import styles from './app.module.css';
+import * as yup from 'yup';
 
 const sendData = (formData) => {
 	console.log(formData);
 };
 
+const emailChangeScheme = yup
+.string()
+.matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Некорректный формат email-адреса');
+
+const passwordChangeScheme = yup
+.string()
+.matches(/^(?=.*[A-Z])[a-zA-Z0-9]+$/, 'Пароль должен содержать хотя бы одну заглавную букву и не использовать кирилицу')
+.min(3, 'Пароль Должен быть не меньше 3 символов.');
+
+const repeatPasswordChangeScheme = yup
+.string()
+.matches(/^(?=.*[A-Z])[a-zA-Z0-9]+$/, 'Пароль должен содержать хотя бы одну заглавную букву и не использовать кирилицу')
+.min(3, 'Поле должно быть не меньше 3 символов.');
+
+const validateAndGetErrorMessage = (scheme, value) => {
+	let errorMessage = null;
+	try {
+		scheme.validateSync(value, { abortEarly: false });
+	} catch ({ errors }) {
+		errorMessage = errors
+			.reduce((message, error) => message + error + '\n', '')
+			.trim();
+	}
+	return errorMessage;
+
+};
 function App() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -22,6 +49,34 @@ function App() {
 	const [formValid, setFormValid] = useState(false);
 
 	const submitButtonRef = useRef();
+
+
+	const onEmailChange = ({ target }) => {
+		const value = target.value;
+		setEmail(value);
+		const error = value
+			? validateAndGetErrorMessage(emailChangeScheme, target.value)
+			: null;
+		setEmailErrorr(error);
+	};
+
+	const onPasswordChange = ({ target }) => {
+		const value = target.value;
+		setPassword(value);
+		const error = value
+			? validateAndGetErrorMessage(passwordChangeScheme, target.value)
+			: null;
+		setPasswordError(error);
+	};
+
+	const onRepeatPasswordChange = ({ target }) => {
+		const value = target.value;
+		setRepeatPassword(value);
+		const error = value
+			? validateAndGetErrorMessage(repeatPasswordChangeScheme, target.value)
+			: null;
+		setRepeatPasswordError(error);
+	};
 
 	useEffect(() => {
 		if (repeatPassword === '') {
@@ -43,32 +98,6 @@ function App() {
 			}, 0);
 		}
 	}, [emailError, passwordError, repeatPasswordError]);
-
-	const onEmailChange = ({ target }) => {
-		setEmail(target.value);
-		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target.value)) {
-			setEmailErrorr('Некорректный формат email-адреса');
-		} else {
-			setEmailErrorr('');
-		}
-	};
-
-	const onPasswordChange = ({ target }) => {
-		setPassword(target.value);
-		if (target.value.length < 3 || target.value.length < 8) {
-			setPasswordError('Пароль должен быть длиной от 3 и не меньше 8 символов');
-		} else if (!/^(?=.*[A-Z])[a-zA-Z0-9]+$/.test(target.value)) {
-			setPasswordError(
-				'Пароль должен содержать хотя бы одну заглавную букву и не использовать кирилицу',
-			);
-		} else {
-			setPasswordError('');
-		}
-	};
-
-	const onRepeatPasswordChange = ({ target }) => {
-		setRepeatPassword(target.value);
-	};
 
 	const blurHandler = ({ target }) => {
 		if (target.name === 'email') {
