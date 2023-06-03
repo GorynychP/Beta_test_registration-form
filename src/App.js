@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './app.module.css';
 import { useForm } from 'react-hook-form';
 
 function App() {
-	const submitButtonRef = useRef();
+	const submitButtonRef = useRef(null);
 
 	const {
 		register,
@@ -48,8 +48,8 @@ function App() {
 	};
 	const repeatPasswordProps = {
 		required: true,
-		minLength: { value: 3, message: 'Должно быть не меньше 3 символов' },
-		maxLength: { value: 20, message: 'Должно быть не больше 20 символов' },
+		minLength: { value: 3, message: 'Поле должно быть не меньше 3 символов' },
+		maxLength: { value: 20, message: 'Поле должно быть не больше 20 символов' },
 		pattern: {
 			value: /^(?=.*[A-Z])[a-zA-Z0-9]+$/,
 			message:
@@ -61,6 +61,12 @@ function App() {
 	const emailError = errors.email?.message;
 	const passwordError = errors.password?.message;
 	const repeatPasswordError = errors.repeatPassword?.message;
+
+	useEffect(() => {
+		if (isValid) {
+			submitButtonRef.current.focus();
+		}
+	}, [isValid]);
 
 	return (
 		<div className={styles.App}>
@@ -85,7 +91,9 @@ function App() {
 						placeholder="Пароль"
 						{...register('password', passwordProps)}
 					/>
-					{passwordError && <div className={styles.errorLabel}>{passwordError}</div>}
+					{passwordError && (
+						<div className={styles.errorLabel}>{passwordError}</div>
+					)}
 				</div>
 
 				<div className={styles.form_group}>
